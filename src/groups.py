@@ -35,3 +35,10 @@ for i, group in enumerate(groups):
         ]
     )
 
+from libqtile.config import ScratchPad, DropDown
+
+groups.append(ScratchPad('scratchpad', [
+    # define a drop down terminal.
+    DropDown('term', cfg.terminal, opacity=0.8, height=0.6)
+]))
+

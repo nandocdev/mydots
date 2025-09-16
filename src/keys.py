@@ -97,6 +97,8 @@ keys = [
     Key([mod], "s", lazy.spawn(f"scrot -s {cfg.screenshot}"), desc="Take a screenshot"),
     # Menu de sesion
     Key([mod], "x", lazy.spawn("/home/ferncastillo/.config/qtile/scripts/session_menu.sh"), desc="Session menu"),
+    # Scratchpad
+    Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
     # --------------------------xx---------------------------
     # atajos de teclas de hardware
     # -----------------------------------------------------
