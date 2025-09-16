@@ -95,7 +95,9 @@ keys = [
     Key([mod], "v", lazy.spawn(cfg.editor), desc="Launch text editor"),
     # lanza la captura de pantalla
     Key([mod], "s", lazy.spawn(f"scrot -s {cfg.screenshot}"), desc="Take a screenshot"),
-    # -----------------------------------------------------
+    # Menu de sesion
+    Key([mod], "x", lazy.spawn("/home/ferncastillo/.config/qtile/scripts/session_menu.sh"), desc="Session menu"),
+    # --------------------------xx---------------------------
     # atajos de teclas de hardware
     # -----------------------------------------------------
     # lanza redshift
