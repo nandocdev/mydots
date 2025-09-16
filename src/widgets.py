@@ -191,6 +191,7 @@ def widgetClock():
     return widget.Clock(
         **__base(),
         format="%A, %d %B - %H:%M",
+        mouse_callbacks={"Button1": lazy.spawn("zenity --calendar")},
     )
 
 
