@@ -32,22 +32,31 @@ from src.config import theme, font, text_size, icon_size
 from libqtile import widget
 from libqtile.lazy import lazy
 from src.functions import get_network_interface
+from libqtile.widget import ImapWidget
+import keyring
 
-
-def __randomColor(diccionario):
-    #  crea una copia del diccionario
-    diccionario = diccionario.copy()
-    if not diccionario:
-        return None  # Retorna None si el diccionario está vacío
-    # elimina el key 'background' del diccionario
-    diccionario.pop("background")
-    return random.choice(list(diccionario.keys()))
+def __randomColor(diccionario: dict) -> str:
+    """
+    Picks a random key from a dictionary, excluding 'background'.
+    Falls back to 'foreground' if no other keys are available.
+    """
+    # Create a list of keys from the dictionary, excluding 'background'.
+    color_keys = [key for key in diccionario.keys() if key != "background"]
+    
+    if not color_keys:
+        # If no other keys are available, fall back to 'foreground'.
+        # This assumes 'foreground' is a key that will resolve to a valid color.
+        return "foreground"
+        
+    return random.choice(color_keys)
 
 
 def __base():
     return {
         "background": theme["background"],
-        "foreground": theme[__randomColor(theme)],
+        "foreground": theme[
+            __randomColor(theme)
+        ],  # __randomColor(theme) returns a key, which is a string
     }
 
 
@@ -250,11 +259,31 @@ def widgetPomodoro():
     )
 
 
+
+def widgetImap():
+    return widget.ImapWidget(
+        **__base(),
+        user='ferncastillo@css.gob.pa',  # Tu dirección de email
+        server='mail.css.gob.pa',     # Servidor IMAP (para Gmail)
+        password=keyring.get_password("mail.css.gob.pa", "ferncastillo@css.gob.pa"),
+        mbox='"INBOX"',              # Buzón a monitorear (entre comillas dobles)
+        label='📧 ',                 # Etiqueta/icono para mostrar
+        hide_no_unseen=True,         # Ocultar cuando no hay mensajes nuevos
+        update_interval=2,         # Actualizar cada 2 segundos
+        fmt='<b>{}</b>',            # Texto en negrita
+        mouse_callbacks={
+            'Button1': lazy.spawn('evolution'),  # Abrir cliente de email al hacer click
+        }
+    )
+
+
 primary_widgets = [
     widgetGrupBox(),
     __separator(),
     widgetWindowName(),
     __separator(),
+    __separator(),
+    widgetImap(),
     __separator(),
     widgetCheckUpdates(),
     __separator(),
