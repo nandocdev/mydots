@@ -30,6 +30,7 @@ Colores dsiopnibles:
 import random
 from src.config import theme, font, text_size, icon_size
 from libqtile import widget
+from libqtile.lazy import lazy
 from src.functions import get_network_interface
 
 
@@ -212,6 +213,7 @@ def widgetVolume():
         **__base(),
         # emoji=True,
         emoji_list=[" ", " ", " ", " "],
+        mouse_callbacks={"Button1": lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")},
     )
 
 
