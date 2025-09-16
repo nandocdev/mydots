@@ -221,8 +221,12 @@ def widgetVolume():
 def widgetBacklight():
     return widget.Backlight(
         **__base(),
-        backlight_name="intel_backlight",
+        backlight_name="amdgpu_bl1",
         fmt="󰝩 {}",
+        mouse_callbacks={
+            "Button4": lazy.spawn("brightnessctl set +5%"),
+            "Button5": lazy.spawn("brightnessctl set 5%-"),
+        },
     )
 
 
@@ -273,6 +277,8 @@ primary_widgets = [
     __separator(),
     __icon("󰔠 "),
     widgetClock(),
+    widgetBacklight(),
+    __separator(),
     widgetKeyboardLayout(),
     widgetCurrentLayoutIcon(),
 ]
