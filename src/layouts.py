@@ -15,8 +15,8 @@ from libqtile.config import Match
 
 __base = {
    'border_focus': theme['cyan'],
-   'border_width': 1,
-   'margin': 3
+   'border_width': 2,
+   'margin': 5
 }
 
 layouts = [

@@ -33,6 +33,7 @@ from libqtile import widget
 from libqtile.lazy import lazy
 from src.functions import get_network_interface
 from libqtile.widget import ImapWidget
+# from libqtile.widget.bluetooth import Bluetooth
 import keyring
 
 def __randomColor(diccionario: dict) -> str:
@@ -199,7 +200,7 @@ def widgetBattery():
 def widgetClock():
     return widget.Clock(
         **__base(),
-        format="%A, %d %B - %H:%M",
+        format="%c",
         mouse_callbacks={"Button1": lazy.spawn("zenity --calendar")},
     )
 
@@ -219,11 +220,12 @@ def widgetKeyboardLayout():
 
 
 def widgetVolume():
-    return widget.Volume(
+    return widget.PulseVolume(
         **__base(),
         # emoji=True,
         emoji_list=[" ", " ", " ", " "],
         mouse_callbacks={"Button1": lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")},
+        limit_max_volume=True,
     )
 
 
@@ -277,6 +279,18 @@ def widgetImap():
     )
 
 
+def widgetBluetooth():
+    return widget.Bluetooth(
+        **__base(),
+        default_text='BT {connected_devices}',
+        default_show_battery=True,
+        device_battery_format=' ({battery}%)',
+        mouse_callbacks={
+            'Button1': lazy.spawn('blueman-manager'), # Abre el gestor de Bluetooth
+        }
+    )
+
+
 primary_widgets = [
     widgetGrupBox(),
     __separator(),
@@ -292,6 +306,8 @@ primary_widgets = [
     widgetNet(),
     __separator(),
     widgetVolume(),
+    __separator(),
+    widgetBluetooth(),
     __separator(),
     __icon(" "),
     widgetCpu(),

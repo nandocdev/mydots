@@ -99,6 +99,12 @@ keys = [
     Key([mod], "x", lazy.spawn("/home/ferncastillo/.config/qtile/scripts/session_menu.sh"), desc="Session menu"),
     # Scratchpad
     Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
+    Key([mod], "u", lazy.group['scratchpad'].dropdown_toggle('calc'), desc="Toggle scratchpad calculator"),
+    Key([mod], "i", lazy.group['scratchpad'].dropdown_toggle('notes'), desc="Toggle scratchpad notes"),
+    # Workflow environments
+    Key([mod, "shift"], "d", lazy.spawn("kitty"), desc="Launch terminal"),
+    Key([mod, "shift"], "m", lazy.spawn("vlc"), desc="Launch media player"),
+    Key([mod, "shift"], "o", lazy.spawn("libreoffice"), desc="Launch office suite"),
     # --------------------------xx---------------------------
     # atajos de teclas de hardware
     # -----------------------------------------------------

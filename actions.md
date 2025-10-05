@@ -1,7 +1,7 @@
 algunas ideas que podríamos explorar son:
 
-- Widgets Interactivos: Añadir widgets más complejos a tu barra de estado (ej. control de volumen, brillo, calendario emergente, estado del tiempo).
-- Gestión de Sesiones: Crear un menú de apagado/reinicio/bloqueo accesible desde una combinación de teclas.
-- Scratchpads: Implementar "scratchpads" (ventanas flotantes que puedes mostrar u ocultar rápidamente) para aplicaciones como la terminal, una calculadora o notas.
-- Mejoras Visuales: Añadir efectos visuales como transparencias (si usas un compositor como picom), huecos (gaps) entre ventanas o un segundo StatusBar.
-- Optimización de Flujos de Trabajo: Crear funciones personalizadas para automatizar tareas repetitivas, como mover ventanas de una manera específica o lanzar grupos de aplicaciones.
+- Widgets Interactivos: Añadir widgets más complejos a tu barra de estado (ej. control de volumen, brillo, calendario emergente, estado del tiempo). ❌ NO IMPLEMENTADO: Widget de clima no disponible en Qtile por defecto. Requiere widget personalizado o extensión.
+- Gestión de Sesiones: Crear un menú de apagado/reinicio/bloqueo accesible desde una combinación de teclas. ✅ IMPLEMENTADO: Ya existía session_menu.sh con atajo mod+x.
+- Scratchpads: Implementar "scratchpads" (ventanas flotantes que puedes mostrar u ocultar rápidamente) para aplicaciones como la terminal, una calculadora o notas. ✅ IMPLEMENTADO: Agregados scratchpads para calculadora (galculator) y notas (mousepad), además del terminal existente. Atajos: mod+y (terminal), mod+u (calculadora), mod+i (notas).
+- Mejoras Visuales: Añadir efectos visuales como transparencias (si usas un compositor como picom), huecos (gaps) entre ventanas o un segundo StatusBar. ✅ IMPLEMENTADO: Aumentados gaps entre ventanas (margin=5), ancho de borde (border_width=2). Picom ya configurado en autostart.
+- Optimización de Flujos de Trabajo: Crear funciones personalizadas para automatizar tareas repetitivas, como mover ventanas de una manera específica o lanzar grupos de aplicaciones. ✅ IMPLEMENTADO: Agregados atajos para lanzar aplicaciones comunes: mod+shift+d (terminal), mod+shift+m (vlc), mod+shift+o (libreoffice).

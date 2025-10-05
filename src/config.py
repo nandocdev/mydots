@@ -11,6 +11,7 @@ Date: YYYY-MM-DD
 import os
 from datetime import datetime
 from src.colors import colors
+import random
 
 # variables privadas
 __datetime = datetime.now().strftime("%Y%m%d%I%M%S%f")
@@ -41,5 +42,7 @@ if not os.path.exists(wallpapers):
     if not os.path.exists(wallpapers):
         os.makedirs(wallpapers)
 # tema por defecto: [gruvbox, darcula, nord, solarized-dark, one-dark, ]
-theme = colors["one-dark"]
+themes = list(colors.keys())
+random_theme = random.choice(themes)
+theme = colors[random_theme]
 screenshot = get_screenshot_path()

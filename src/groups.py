@@ -39,6 +39,10 @@ from libqtile.config import ScratchPad, DropDown
 
 groups.append(ScratchPad('scratchpad', [
     # define a drop down terminal.
-    DropDown('term', cfg.terminal, opacity=0.8, height=0.6)
+    DropDown('term', cfg.terminal, opacity=0.8, height=0.6),
+    # define a drop down calculator.
+    DropDown('calc', 'galculator', opacity=0.9, width=0.4, height=0.6, x=0.3, y=0.1),
+    # define a drop down notes.
+    DropDown('notes', 'mousepad', opacity=0.9, width=0.6, height=0.8, x=0.2, y=0.1)
 ]))
 
