@@ -14,9 +14,12 @@ from libqtile.config import Match
 
 
 __base = {
-   'border_focus': theme['cyan'],
+   'border_focus': theme['bright_cyan'],  # Color más vibrante
+   'border_normal': theme['comment'],  # Borde inactivo más sutil
    'border_width': 2,
-   'margin': 5
+   'margin': 6,  # Gaps ligeramente aumentados para mejor visualización
+   'single_border_width': 2,
+   'single_margin': 6,
 }
 
 layouts = [

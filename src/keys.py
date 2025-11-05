@@ -9,6 +9,7 @@ Date: YYYY-MM-DD
 """
 from libqtile.config import Key
 from libqtile.lazy import lazy
+import os
 
 # from libs import ALSAVolumeControl
 import src.config as cfg
@@ -96,7 +97,7 @@ keys = [
     # lanza la captura de pantalla
     Key([mod], "s", lazy.spawn(f"scrot -s {cfg.screenshot}"), desc="Take a screenshot"),
     # Menu de sesion
-    Key([mod], "x", lazy.spawn("/home/ferncastillo/.config/qtile/scripts/session_menu.sh"), desc="Session menu"),
+    Key([mod], "x", lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts/session_menu.sh")), desc="Session menu"),
     # Scratchpad
     Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
     Key([mod], "u", lazy.group['scratchpad'].dropdown_toggle('calc'), desc="Toggle scratchpad calculator"),

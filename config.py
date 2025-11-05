@@ -16,6 +16,7 @@ screens = screens
 # ----------------------------
 # -------- Launcher ----------
 # ----------------------------
+
 dgroups_key_binder = None
 dgroups_app_rules = []
 main = None
