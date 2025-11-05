@@ -222,6 +222,7 @@ qtile/
 ├── scripts/
 │   └── session_menu.sh   # Script de menú de sesión
 └── src/
+    ├── app_rules.py      # Reglas para asignar apps a grupos
     ├── autostart.py      # Aplicaciones al inicio
     ├── colors.py         # Paletas de colores
     ├── config.py         # Configuración base (mod, terminal, etc.)
@@ -263,6 +264,45 @@ EMAIL_CLIENT=thunderbird
 ```
 
 **Alternativa**: También puedes editar `src/config.py` directamente, pero usar `.env` es más limpio y seguro.
+
+### Reglas de Aplicaciones (Asignar a Grupos)
+
+Las aplicaciones se pueden asignar automáticamente a grupos específicos cuando se abren. Esto se configura en `src/app_rules.py`.
+
+**Cómo funciona:**
+- Cuando abres una aplicación, Qtile busca su `wm_class`
+- Si hay una regla definida, la aplicación se mueve automáticamente al grupo correspondiente
+- También cambia automáticamente a ese grupo
+
+**Para encontrar el wm_class de una aplicación:**
+```bash
+xprop WM_CLASS
+# Haz click en la ventana de la aplicación
+```
+
+**Para configurar reglas:**
+Edita `src/app_rules.py` y agrega tu aplicación al diccionario `app_rules`:
+
+```python
+app_rules = {
+    'brave': '2',           # Brave en grupo 2
+    'Sublime_text': '3',   # Sublime Text en grupo 3
+    'code': '3',            # VS Code en grupo 3
+    # ... más aplicaciones
+}
+```
+
+**Grupos disponibles:** 1-9 (corresponden a `Super+1` a `Super+9`)
+
+**Ejemplos preconfigurados:**
+- Navegadores → Grupo 2
+- Editores de código → Grupo 3
+- Terminales → Grupo 1
+- Gestores de archivos → Grupo 4
+- Multimedia → Grupo 5
+- Office → Grupo 6
+- Email → Grupo 7
+- Chat → Grupo 8
 
 ### Modificar Widgets
 

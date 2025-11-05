@@ -6,6 +6,7 @@ from src.layouts import layouts
 # from src.widgets import widgets
 from src.screens import screens
 import src.autostart
+import src.app_rules  # Importar reglas de aplicaciones para activar hooks
 
 keys = keys
 groups = groups
