@@ -61,9 +61,17 @@ def get_env(key, default=None):
     """Obtiene una variable de entorno del archivo .env o del sistema"""
     # Primero intentar desde .env
     if key in _env:
-        return _env[key]
+        value = _env[key]
+        # Expandir ~ en rutas
+        if isinstance(value, str) and value.startswith('~'):
+            value = os.path.expanduser(value)
+        return value
     # Luego desde variables de entorno del sistema
-    return os.getenv(key, default)
+    env_value = os.getenv(key, default)
+    # Expandir ~ en rutas también para variables del sistema
+    if isinstance(env_value, str) and env_value.startswith('~'):
+        env_value = os.path.expanduser(env_value)
+    return env_value
 
 
 def get_screenshot_path():
@@ -121,7 +129,17 @@ keyboard_layouts = get_env('KEYBOARD_LAYOUTS', 'latam,es').split(',')
 lock_command = get_env('LOCK_COMMAND', 'light-locker-command -l')
 
 # Ruta de configuración de Qtile
+# Usar la ruta real del directorio de configuración, no del .env
+# para evitar problemas con placeholders
 qtile_config_path = get_env('QTILE_CONFIG_PATH', __config_dir)
+# Asegurarse de que la ruta sea absoluta y expandida
+if qtile_config_path and not os.path.isabs(qtile_config_path):
+    qtile_config_path = os.path.abspath(os.path.expanduser(qtile_config_path))
+elif qtile_config_path:
+    qtile_config_path = os.path.expanduser(qtile_config_path)
+# Si la ruta del .env no existe o es un placeholder, usar la ruta real
+if not qtile_config_path or not os.path.exists(qtile_config_path) or 'USER' in qtile_config_path:
+    qtile_config_path = __config_dir
 # tema por defecto: [gruvbox, dracula, nord, solarized-dark, one-dark, ayu-dark, catppuccin, tokyo-night]
 themes = list(colors.keys())
 

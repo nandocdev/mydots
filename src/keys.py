@@ -14,6 +14,7 @@ import os
 # from libs import ALSAVolumeControl
 import src.config as cfg
 
+session_script = os.path.join(cfg.qtile_config_path, "scripts", "session_menu.sh")
 mod = cfg.mod
 keys = [
     # atajos de teclas de navegacion entre ventanas
@@ -97,11 +98,13 @@ keys = [
     # lanza la captura de pantalla
     Key([mod], "s", lazy.spawn(f"scrot -s {cfg.screenshot}"), desc="Take a screenshot"),
     # Menu de sesion
-    Key([mod], "x", lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts/session_menu.sh")), desc="Session menu"),
+    # Usar ruta absoluta para asegurar que funcione correctamente
+    Key([mod], "x", lazy.spawn(session_script), desc="Session menu"),
     # Scratchpad
     Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
     Key([mod], "u", lazy.group['scratchpad'].dropdown_toggle('calc'), desc="Toggle scratchpad calculator"),
     Key([mod], "i", lazy.group['scratchpad'].dropdown_toggle('notes'), desc="Toggle scratchpad notes"),
+    Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('brave'), desc="Toggle scratchpad notes"),
     # Workflow environments
     Key([mod, "shift"], "d", lazy.spawn("kitty"), desc="Launch terminal"),
     Key([mod, "shift"], "m", lazy.spawn("vlc"), desc="Launch media player"),

@@ -28,32 +28,42 @@ Colores dsiopnibles:
 """
 
 from src.config import (
-    theme, font, text_size, icon_size,
-    email_user, email_server, email_mbox, email_keyring_service, email_client,
-    backlight_name, disk_device, keyboard_layouts
+    theme,
+    font,
+    text_size,
+    icon_size,
+    email_user,
+    email_server,
+    email_mbox,
+    email_keyring_service,
+    email_client,
+    backlight_name,
+    disk_device,
+    keyboard_layouts,
 )
 from libqtile import widget
 from libqtile.lazy import lazy
 from src.functions import get_network_interface
 from libqtile.widget import ImapWidget
+
 # from libqtile.widget.bluetooth import Bluetooth
 import keyring
 
 # Sistema de colores consistente para mejor diseño
 # Mapeo de widgets a colores del tema para consistencia visual
 _widget_colors = {
-    'default': 'cyan',
-    'network': 'bright_cyan',
-    'system': 'bright_green',
-    'media': 'bright_pink',
-    'status': 'bright_yellow',
-    'info': 'comment',
+    "default": "cyan",
+    "network": "bright_cyan",
+    "system": "bright_green",
+    "media": "bright_pink",
+    "status": "bright_yellow",
+    "info": "comment",
 }
 
 
-def __base(color_key='default'):
+def __base(color_key="default"):
     """Retorna estilos base con color consistente del tema"""
-    color = _widget_colors.get(color_key, 'cyan')
+    color = _widget_colors.get(color_key, "cyan")
     return {
         "background": theme["background"],
         "foreground": theme[color],
@@ -66,17 +76,12 @@ def __inverse():
 
 def __separator():
     """Separador con mejor espaciado visual"""
-    return widget.Sep(**__base('info'), linewidth=0, padding=8)
+    return widget.Sep(**__base("info"), linewidth=0, padding=8)
 
 
-def __icon(icon, color_key='default'):
+def __icon(icon, color_key="default"):
     """Icono con mejor padding y color consistente"""
-    return widget.TextBox(
-        text=icon, 
-        fontsize=icon_size, 
-        padding=2, 
-        **__base(color_key)
-    )
+    return widget.TextBox(text=icon, fontsize=icon_size, padding=2, **__base(color_key))
 
 
 def __textInput(text):
@@ -132,7 +137,7 @@ def widgetPrompt():
 def widgetCheckUpdates():
     """Widget de actualizaciones con intervalos optimizados"""
     return widget.CheckUpdates(
-        **__base('status'),
+        **__base("status"),
         distro="Arch_checkupdates",
         display_format="  {updates}",
         no_update_string="",
@@ -145,7 +150,7 @@ def widgetCheckUpdates():
 def widgetNet():
     """Widget de red con intervalo optimizado"""
     return widget.Net(
-        **__base('network'),
+        **__base("network"),
         interface=get_network_interface(),
         format="{down} ↓↑ {up}",
         update_interval=2,  # Reducido de default para mejor balance
@@ -155,7 +160,7 @@ def widgetNet():
 def widgetWlan():
     """Widget WiFi con intervalo optimizado"""
     return widget.Wlan(
-        **__base('network'),
+        **__base("network"),
         interface=get_network_interface(),
         format="{essid} {percent:2.0%}",
         disconnected_message="Disconnected",
@@ -170,7 +175,7 @@ def widgetWlanSup():
     # Solo usar Wlan si es una interfaz inalámbrica
     if any(x in interface for x in ["wlan", "wlp", "wifi"]):
         return widget.Wlan(
-            **__base('network'),
+            **__base("network"),
             interface=interface,
             format="{essid} {percent:2.0%}",
             disconnected_message="Disconnected",
@@ -179,13 +184,13 @@ def widgetWlanSup():
         )
     else:
         # Devolver un widget placeholder para interfaces cableadas
-        return widget.TextBox(**__base('network'), text="󰈀 Ethernet", padding=5)
+        return widget.TextBox(**__base("network"), text="󰈀  Ethernet", padding=5)
 
 
 def widgetMemory():
     """Widget de memoria con formato optimizado"""
     return widget.Memory(
-        **__base('system'),
+        **__base("system"),
         format="{MemUsed: .1f}{mm}/{MemTotal: .1f}{mm}",
         measure_mem="G",
         update_interval=3,  # Intervalo optimizado
@@ -195,7 +200,7 @@ def widgetMemory():
 def widgetCpu():
     """Widget de CPU con intervalo optimizado"""
     return widget.CPU(
-        **__base('system'),
+        **__base("system"),
         format="{load_percent}%",
         update_interval=2,  # Intervalo explícito para mejor control
     )
@@ -204,7 +209,7 @@ def widgetCpu():
 def widgetDisk():
     """Widget de disco con formato mejorado"""
     return widget.HDD(
-        **__base('system'),
+        **__base("system"),
         format="HDD {HDDPercent}%",
         update_interval=300,  # 5 minutos (aumentado para mejor performance)
         device=disk_device,
@@ -214,7 +219,7 @@ def widgetDisk():
 def widgetBattery():
     """Widget de batería con formato mejorado"""
     return widget.Battery(
-        **__base('status'),
+        **__base("status"),
         format="{char} {percent:2.0%} {watt:.1f}W",
         charge_char="󱘖 ",
         discharge_char=" ",
@@ -227,7 +232,7 @@ def widgetBattery():
 def widgetClock():
     """Widget de reloj con mejor diseño"""
     return widget.Clock(
-        **__base('info'),
+        **__base("info"),
         format="%c",
         mouse_callbacks={"Button1": lazy.spawn("zenity --calendar")},
     )
@@ -236,7 +241,7 @@ def widgetClock():
 def widgetSystray():
     """Widget de system tray"""
     return widget.Systray(
-        **__base('info'),
+        **__base("info"),
         padding=5,
     )
 
@@ -253,9 +258,9 @@ def widgetKeyboardLayout():
             display_map[layout] = " "
         else:
             display_map[layout] = f"{layout.upper()} "
-    
+
     return widget.KeyboardLayout(
-        **__base('info'),
+        **__base("info"),
         configured_keyboards=[k.strip() for k in keyboard_layouts],
         display_map=display_map,
     )
@@ -264,9 +269,11 @@ def widgetKeyboardLayout():
 def widgetVolume():
     """Widget de volumen con mejor diseño"""
     return widget.PulseVolume(
-        **__base('media'),
+        **__base("media"),
         emoji_list=["󰝟 ", "󰕿 ", "󰖀 ", "󰕾 "],
-        mouse_callbacks={"Button1": lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")},
+        mouse_callbacks={
+            "Button1": lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+        },
         limit_max_volume=True,
         update_interval=0.5,  # Para respuesta rápida en cambios
     )
@@ -275,7 +282,7 @@ def widgetVolume():
 def widgetBacklight():
     """Widget de brillo con mejor diseño"""
     return widget.Backlight(
-        **__base('media'),
+        **__base("media"),
         backlight_name=backlight_name,
         fmt="󰃠 {}",
         mouse_callbacks={
@@ -289,7 +296,7 @@ def widgetBacklight():
 def widgetCurrentLayout():
     """Widget de layout actual"""
     return widget.CurrentLayout(
-        **__base('info'),
+        **__base("info"),
         fmt="󰄯 {}",
     )
 
@@ -297,7 +304,7 @@ def widgetCurrentLayout():
 def widgetCurrentLayoutIcon():
     """Widget de icono de layout actual"""
     return widget.CurrentLayout(
-        **__base('info'),
+        **__base("info"),
         scale=0.7,
     )
 
@@ -305,44 +312,43 @@ def widgetCurrentLayoutIcon():
 def widgetPomodoro():
     """Widget Pomodoro"""
     return widget.Pomodoro(
-        **__base('status'),
+        **__base("status"),
     )
-
 
 
 def widgetImap():
     """Widget de email con intervalo optimizado"""
     # Solo mostrar widget si hay configuración de email
     if not email_user or not email_server:
-        return widget.TextBox(**__base('status'), text="", padding=0)
-    
+        return widget.TextBox(**__base("status"), text="", padding=0)
+
     return widget.ImapWidget(
-        **__base('status'),
+        **__base("status"),
         user=email_user,
         server=email_server,
         password=keyring.get_password(email_keyring_service, email_user),
         mbox=f'"{email_mbox}"',
-        label='📧 ',
+        label="📧 ",
         hide_no_unseen=True,
         update_interval=60,  # Aumentado de 2s a 60s para mejor performance
-        fmt='<b>{}</b>',
+        fmt="<b>{}</b>",
         mouse_callbacks={
-            'Button1': lazy.spawn(email_client),
-        }
+            "Button1": lazy.spawn(email_client),
+        },
     )
 
 
 def widgetBluetooth():
     """Widget Bluetooth con mejor diseño"""
     return widget.Bluetooth(
-        **__base('media'),
-        default_text='󰂯 {connected_devices}',
+        **__base("media"),
+        default_text="󰂯 {connected_devices}",
         default_show_battery=True,
-        device_battery_format=' ({battery}%)',
+        device_battery_format=" ({battery}%)",
         update_interval=10,  # Intervalo optimizado
         mouse_callbacks={
-            'Button1': lazy.spawn('blueman-manager'),
-        }
+            "Button1": lazy.spawn("blueman-manager"),
+        },
     )
 
 
@@ -355,7 +361,7 @@ primary_widgets = [
     __separator(),
     widgetCheckUpdates(),
     __separator(),
-    __icon("󰛵 ", 'network'),
+    __icon("󰛵 ", "network"),
     widgetWlanSup(),
     widgetNet(),
     __separator(),
@@ -363,18 +369,18 @@ primary_widgets = [
     __separator(),
     widgetBluetooth(),
     __separator(),
-    __icon(" ", 'system'),
+    __icon(" ", "system"),
     widgetCpu(),
     __separator(),
-    __icon("󰪏 ", 'system'),
+    __icon("󰪏 ", "system"),
     widgetMemory(),
     __separator(),
-    __icon("󰋊 ", 'system'),
+    __icon("󰋊 ", "system"),
     widgetDisk(),
     __separator(),
     widgetBattery(),
     __separator(),
-    __icon("󰔠 ", 'info'),
+    __icon("󰔠 ", "info"),
     widgetClock(),
     widgetBacklight(),
     __separator(),
@@ -389,21 +395,21 @@ secondary_widgets = [
     widget.Spacer(length=8),
     widgetCheckUpdates(),
     __separator(),
-    __icon("󰛵 ", 'network'),
+    __icon("󰛵 ", "network"),
     widgetWlan(),
     __separator(),
-    __icon(" ", 'system'),
+    __icon(" ", "system"),
     widgetCpu(),
     __separator(),
-    __icon("󰪏 ", 'system'),
+    __icon("󰪏 ", "system"),
     widgetMemory(),
     __separator(),
-    __icon("󰋊 ", 'system'),
+    __icon("󰋊 ", "system"),
     widgetDisk(),
     __separator(),
     widgetBattery(),
     __separator(),
-    __icon("󰔠 ", 'info'),
+    __icon("󰔠 ", "info"),
     widgetClock(),
     __separator(),
     widgetSystray(),
