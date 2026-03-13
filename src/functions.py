@@ -1,17 +1,23 @@
 import psutil
+import time
 
 # Cache para la interfaz de red (mejora performance)
 _network_interface_cache = None
+_last_check_time = 0
 _cache_timeout = 300  # 5 minutos
 
 
 def get_network_interface():
     """Obtiene la interfaz de red activa usando psutil con cache"""
-    global _network_interface_cache
+    global _network_interface_cache, _last_check_time
     
-    # Si hay cache válido, retornarlo
-    if _network_interface_cache is not None:
+    current_time = time.time()
+    
+    # Si hay cache válido y no ha expirado, retornarlo
+    if _network_interface_cache is not None and (current_time - _last_check_time) < _cache_timeout:
         return _network_interface_cache
+    
+    _last_check_time = current_time
     
     try:
         # Obtener estadísticas de red
