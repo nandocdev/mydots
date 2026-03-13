@@ -80,9 +80,47 @@ def __separator():
     return widget.Sep(**__base("info"), linewidth=0, padding=8)
 
 
-def __icon(icon, color_key="default"):
+def __icon(icon, color_key="default", is_pill=False):
     """Icono con mejor padding y color consistente"""
-    return widget.TextBox(text=icon, fontsize=icon_size, padding=2, **__base(color_key))
+    base_style = __base(color_key)
+    if is_pill:
+        # Si es parte de una píldora, invertimos colores
+        base_style = {"background": theme[_widget_colors.get(color_key, "cyan")], "foreground": theme["background"]}
+        
+    return widget.TextBox(text=icon, fontsize=icon_size + 2, padding=4, **base_style)
+
+
+def __pill_open(color_key="default"):
+    """Abre una cápsula con el color del tema"""
+    color = theme[_widget_colors.get(color_key, "cyan")]
+    return widget.TextBox(
+        text="",
+        fontsize=bar_size + 4,
+        padding=0,
+        foreground=color,
+        background=theme["background"]
+    )
+
+
+def __pill_close(color_key="default"):
+    """Cierra una cápsula con el color del tema"""
+    color = theme[_widget_colors.get(color_key, "cyan")]
+    return widget.TextBox(
+        text="",
+        fontsize=bar_size + 4,
+        padding=0,
+        foreground=color,
+        background=theme["background"]
+    )
+
+
+def __pill_base(color_key="default"):
+    """Estilo base para el contenido de una píldora (colores invertidos)"""
+    color_name = _widget_colors.get(color_key, "cyan")
+    return {
+        "background": theme[color_name],
+        "foreground": theme["background"],
+    }
 
 
 def __textInput(text):
@@ -97,21 +135,18 @@ def widgetGrupBox():
         font=font,
         fontsize=text_size,
         margin_y=3,
-        margin_x=0,
+        margin_x=4,
         padding_y=8,
         padding_x=5,
-        borderwidth=3,
+        borderwidth=1,
         active=theme["bright_green"],
-        inactive=theme["bright_purple"],
-        rounded=False,
-        highlight_method="line",
-        highlight_color=[theme["background"], theme["background"]],
-        urgent_alert_method="line",
-        urgent_border=theme["red"],
-        this_current_screen_border=theme["yellow"],
-        this_screen_border=theme["orange"],
-        other_current_screen_border=theme["comment"],
-        other_screen_border=theme["comment"],
+        inactive=theme["comment"],
+        rounded=True,
+        highlight_method="block",
+        this_current_screen_border=theme["comment"],
+        this_screen_border=theme["comment"],
+        other_current_screen_border=theme["background"],
+        other_screen_border=theme["background"],
         disable_drag=True,
         hide_unused=True,
         toggle=True,
@@ -152,117 +187,128 @@ def widgetPrompt():
     )
 
 
-def widgetCheckUpdates():
+def widgetCheckUpdates(is_pill=True):
     """Widget de actualizaciones con intervalos optimizados"""
+    style = __pill_base("status") if is_pill else __base("status")
     return widget.CheckUpdates(
-        **__base("status"),
+        **style,
         distro="Arch_checkupdates",
-        display_format="  {updates}",
-        no_update_string="",
-        update_interval=3600,  # 1 hora (reducido de 30min para mejor performance)
-        colour_have_updates=theme["bright_orange"],
+        display_format="󰚰 {updates}",
+        no_update_string="󰚰 0",
+        update_interval=3600,
+        colour_have_updates=theme["background"], # Invertido
         colour_no_updates=theme["background"],
     )
 
 
-def widgetNet():
+def widgetNet(is_pill=True):
     """Widget de red con intervalo optimizado"""
+    style = __pill_base("network") if is_pill else __base("network")
     return widget.Net(
-        **__base("network"),
+        **style,
         interface=get_network_interface(),
         format="{down} ↓↑ {up}",
-        update_interval=2,  # Reducido de default para mejor balance
+        update_interval=2,
     )
 
 
-def widgetWlan():
+def widgetWlan(is_pill=True):
     """Widget WiFi con intervalo optimizado"""
+    style = __pill_base("network") if is_pill else __base("network")
     return widget.Wlan(
-        **__base("network"),
+        **style,
         interface=get_network_interface(),
         format="{essid} {percent:2.0%}",
         disconnected_message="Disconnected",
-        update_interval=5,  # Aumentado de 1s a 5s para mejor performance
+        update_interval=5,
         max_chars=12,
     )
 
-def widgetInternetStatus():
+
+def widgetInternetStatus(is_pill=True):
     """Widget de estado de internet con integración de colores del tema"""
+    style = __pill_base("network") if is_pill else __base("status")
     return InternetStatus(
-        **__base("status"),
-        label_connected="󰀂  Online",
-        label_disconnected="󰀂  Offline",
-        color_connected=theme["green"],
+        **style,
+        label_connected="Online",
+        label_disconnected="Offline",
+        color_connected=theme["background"], # Invertido porque está en píldora
         color_disconnected=theme["red"],
         update_interval=10,
         fontsize=text_size - 2,
     )
 
-def widgetWlanSup():
+
+def widgetWlanSup(is_pill=True):
     """Widget WiFi mejorado con detección inteligente"""
     interface = get_network_interface()
+    style = __pill_base("network") if is_pill else __base("network")
     # Solo usar Wlan si es una interfaz inalámbrica
     if any(x in interface for x in ["wlan", "wlp", "wifi"]):
         return widget.Wlan(
-            **__base("network"),
+            **style,
             interface=interface,
-            format="{essid} {percent:2.0%}",
-            disconnected_message="Disconnected",
-            update_interval=5,  # Optimizado para mejor performance
+            format="{percent:2.0%}",
+            disconnected_message="X",
+            update_interval=5,
             max_chars=12,
         )
     else:
-        # Devolver un widget placeholder para interfaces cableadas
-        return widget.TextBox(**__base("network"), text="󰈀  Ethernet", padding=5)
+        return widget.TextBox(**style, text="ETH", padding=5)
 
 
-def widgetMemory():
+def widgetMemory(is_pill=True):
     """Widget de memoria con formato optimizado"""
+    style = __pill_base("system") if is_pill else __base("system")
     return widget.Memory(
-        **__base("system"),
-        format="{MemUsed: .1f}{mm}/{MemTotal: .1f}{mm}",
+        **style,
+        format="{MemUsed: .1f}G",
         measure_mem="G",
-        update_interval=3,  # Intervalo optimizado
+        update_interval=3,
     )
 
 
-def widgetCpu():
+def widgetCpu(is_pill=True):
     """Widget de CPU con intervalo optimizado"""
+    style = __pill_base("system") if is_pill else __base("system")
     return widget.CPU(
-        **__base("system"),
+        **style,
         format="{load_percent}%",
-        update_interval=2,  # Intervalo explícito para mejor control
+        update_interval=2,
     )
 
 
-def widgetDisk():
+def widgetDisk(is_pill=True):
     """Widget de disco con formato mejorado"""
+    style = __pill_base("system") if is_pill else __base("system")
     return widget.HDD(
-        **__base("system"),
-        format="HDD {HDDPercent}%",
-        update_interval=300,  # 5 minutos (aumentado para mejor performance)
+        **style,
+        format="{HDDPercent}%",
+        update_interval=300,
         device=disk_device,
     )
 
 
-def widgetBattery():
+def widgetBattery(is_pill=True):
     """Widget de batería con formato mejorado"""
+    style = __pill_base("status") if is_pill else __base("status")
     return widget.Battery(
-        **__base("status"),
-        format="{char} {percent:2.0%} {watt:.1f}W",
-        charge_char="󱘖 ",
-        discharge_char=" ",
-        empty_char="󱚢 ",
-        full_char="󱇇 ",
-        update_interval=10,  # Intervalo optimizado
+        **style,
+        format="{char} {percent:2.0%}",
+        charge_char="󱘖",
+        discharge_char="",
+        empty_char="󱚢",
+        full_char="󱇇",
+        update_interval=10,
     )
 
 
-def widgetClock():
+def widgetClock(is_pill=True):
     """Widget de reloj con mejor diseño"""
+    style = __pill_base("info") if is_pill else __base("info")
     return widget.Clock(
-        **__base("info"),
-        format="%c",
+        **style,
+        format="%H:%M",
         mouse_callbacks={"Button1": lazy.spawn("zenity --calendar")},
     )
 
@@ -275,36 +321,34 @@ def widgetSystray():
     )
 
 
-def widgetKeyboardLayout():
+def widgetKeyboardLayout(is_pill=True):
     """Widget de layout de teclado"""
+    style = __pill_base("info") if is_pill else __base("info")
     # Crear display_map dinámico basado en layouts configurados
     display_map = {}
     for layout in keyboard_layouts:
         layout = layout.strip()
         if layout == "latam":
-            display_map[layout] = "󰌓 "
+            display_map[layout] = "LA"
         elif layout == "es":
-            display_map[layout] = " "
+            display_map[layout] = "ES"
         else:
-            display_map[layout] = f"{layout.upper()} "
+            display_map[layout] = layout.upper()
 
     return widget.KeyboardLayout(
-        **__base("info"),
+        **style,
         configured_keyboards=[k.strip() for k in keyboard_layouts],
         display_map=display_map,
     )
 
 
-def widgetVolume():
+def widgetVolume(is_pill=True):
     """Widget de volumen con mejor diseño"""
+    style = __pill_base("media") if is_pill else __base("media")
     return widget.PulseVolume(
-        **__base("media"),
-        emoji_list=["󰝟 ", "󰕿 ", "󰖀 ", "󰕾 "],
-        mouse_callbacks={
-            "Button1": lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-        },
+        **style,
         limit_max_volume=True,
-        update_interval=0.5,  # Para respuesta rápida en cambios
+        update_interval=0.5,
     )
 
 
@@ -367,14 +411,14 @@ def widgetImap():
     )
 
 
-def widgetBluetooth():
+def widgetBluetooth(is_pill=True):
     """Widget Bluetooth con mejor diseño"""
+    style = __pill_base("media") if is_pill else __base("media")
     return widget.Bluetooth(
-        **__base("media"),
-        default_text="󰂯 {connected_devices}",
+        **style,
+        default_text="{connected_devices}",
         default_show_battery=True,
-        device_battery_format=" ({battery}%)",
-        update_interval=10,  # Intervalo optimizado
+        update_interval=10,
         mouse_callbacks={
             "Button1": lazy.spawn("blueman-manager"),
         },
@@ -382,66 +426,88 @@ def widgetBluetooth():
 
 
 primary_widgets = [
+    # Izquierda: Grupos y Ventana
+    widget.Spacer(length=10),
     widgetGrupBox(),
     __separator(),
     widgetWindowName(),
-    widget.Spacer(length=8),  # Espaciador para mejor distribución
+    
+    # Centro: Prompt de comandos
+    widget.Spacer(length=widget.STRETCH),
     widgetPrompt(),
-    __separator(),
-    widgetCheckUpdates(),
-    __separator(),
+    widget.Spacer(length=widget.STRETCH),
+    
+    # Derecha: Cápsulas de información
+    # Red
+    __pill_open("network"),
+    __icon("󰀂", "network", is_pill=True),
     widgetInternetStatus(),
-    __icon("󰛵 ", "network"),
+    widget.TextBox(text=" ", **__pill_base("network")),
+    __icon("󰛵", "network", is_pill=True),
     widgetWlanSup(),
-    widgetNet(),
-    __separator(),
-    widgetVolume(),
-    __separator(),
-    widgetBluetooth(),
-    __separator(),
-    __icon(" ", "system"),
+    __pill_close("network"),
+    
+    widget.Spacer(length=10),
+    
+    # Sistema (CPU + Mem)
+    __pill_open("system"),
+    __icon("", "system", is_pill=True),
     widgetCpu(),
-    __separator(),
-    __icon("󰪏 ", "system"),
+    widget.TextBox(text=" ", **__pill_base("system")),
+    __icon("󰪏", "system", is_pill=True),
     widgetMemory(),
-    __separator(),
-    __icon("󰋊 ", "system"),
-    widgetDisk(),
-    __separator(),
+    __pill_close("system"),
+    
+    widget.Spacer(length=10),
+    
+    # Media (Volumen)
+    __pill_open("media"),
+    __icon("󰕾", "media", is_pill=True),
+    widgetVolume(),
+    __pill_close("media"),
+    
+    widget.Spacer(length=10),
+    
+    # Estado (Batería + Updates)
+    __pill_open("status"),
     widgetBattery(),
-    __separator(),
-    __icon("󰔠 ", "info"),
+    widget.TextBox(text=" ", **__pill_base("status")),
+    widgetCheckUpdates(),
+    __pill_close("status"),
+    
+    widget.Spacer(length=10),
+    
+    # Reloj
+    __pill_open("info"),
+    __icon("󰔠", "info", is_pill=True),
     widgetClock(),
-    widgetBacklight(),
-    __separator(),
-    widgetKeyboardLayout(),
+    __pill_close("info"),
+    
+    widget.Spacer(length=10),
     widgetCurrentLayoutIcon(),
+    widget.Spacer(length=10),
 ]
 
 secondary_widgets = [
+    widget.Spacer(length=10),
     widgetGrupBox(),
     __separator(),
     widgetWindowName(),
-    widget.Spacer(length=8),
-    widgetCheckUpdates(),
-    __separator(),
-    __icon("󰛵 ", "network"),
-    widgetWlan(),
-    __separator(),
-    __icon(" ", "system"),
+    
+    widget.Spacer(length=widget.STRETCH),
+    
+    __pill_open("system"),
+    __icon("", "system", is_pill=True),
     widgetCpu(),
-    __separator(),
-    __icon("󰪏 ", "system"),
-    widgetMemory(),
-    __separator(),
-    __icon("󰋊 ", "system"),
-    widgetDisk(),
-    __separator(),
-    widgetBattery(),
-    __separator(),
-    __icon("󰔠 ", "info"),
+    __pill_close("system"),
+    
+    widget.Spacer(length=10),
+    
+    __pill_open("info"),
     widgetClock(),
-    __separator(),
+    __pill_close("info"),
+    
+    widget.Spacer(length=10),
     widgetSystray(),
-    widgetKeyboardLayout(),
+    widget.Spacer(length=10),
 ]
