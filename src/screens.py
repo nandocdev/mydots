@@ -9,14 +9,10 @@ Date: YYYY-MM-DD
 """
 
 import subprocess
-from libqtile import bar
 from libqtile.log_utils import logger
 from libqtile.config import Screen
-from src.config import bar_size, bar_opacity
 from src.widgets import primary_widgets, secondary_widgets
-
-def status_bar(widgets):
-    return bar.Bar(widgets, bar_size, opacity=bar_opacity)
+from src.status_bar import status_bar
 
 screens = [
     Screen(top=status_bar(primary_widgets)),
