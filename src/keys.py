@@ -102,7 +102,7 @@ keys = [
     Key([mod], "x", lazy.spawn(session_script), desc="Session menu"),
     # Scratchpad
     Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
-    Key([mod], "u", lazy.group['scratchpad'].dropdown_toggle('calc'), desc="Toggle scratchpad calculator"),
+    Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('spotify'), desc="Toggle scratchpad Spotify"),
     Key([mod], "i", lazy.group['scratchpad'].dropdown_toggle('notes'), desc="Toggle scratchpad notes"),
     Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('brave'), desc="Toggle scratchpad notes"),
     # Workflow environments
