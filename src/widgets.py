@@ -41,7 +41,7 @@ from src.config import (
     disk_device,
     keyboard_layouts,
 )
-from libqtile import widget
+from libqtile import widget, bar
 from libqtile.lazy import lazy
 from src.functions import get_network_interface
 from libqtile.widget import ImapWidget
@@ -433,9 +433,9 @@ primary_widgets = [
     widgetWindowName(),
     
     # Centro: Prompt de comandos
-    widget.Spacer(length=widget.STRETCH),
+    widget.Spacer(length=bar.STRETCH),
     widgetPrompt(),
-    widget.Spacer(length=widget.STRETCH),
+    widget.Spacer(length=bar.STRETCH),
     
     # Derecha: Cápsulas de información
     # Red
@@ -494,7 +494,7 @@ secondary_widgets = [
     __separator(),
     widgetWindowName(),
     
-    widget.Spacer(length=widget.STRETCH),
+    widget.Spacer(length=bar.STRETCH),
     
     __pill_open("system"),
     __icon("", "system", is_pill=True),
