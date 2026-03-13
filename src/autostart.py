@@ -9,7 +9,7 @@ Date: YYYY-MM-DD
 """
 import subprocess
 import os
-from src.config import wallpapers, get_env
+from src.config import wallpapers, get_env, qtile_config_path
 
 def run_cmd(cmd, shell=True, check=False):
     """Ejecuta comando de forma no bloqueante para mejor performance"""
@@ -27,14 +27,20 @@ def run_cmd(cmd, shell=True, check=False):
 
 # Configuración de comandos de inicio desde .env o valores por defecto
 wallpapers_path = wallpapers
-picom_backend = get_env('PICOM_BACKEND', '--experimental-backends')
+picom_backend = get_env('PICOM_BACKEND', '')
+picom_config = os.path.join(qtile_config_path, "src", "custom", "picom.conf")
 xrandr_command = get_env('XRANDR_COMMAND', '')
 
 # Lista de comandos de inicio
 autoinit = [
     f"feh --bg-fill --randomize {wallpapers_path}/*",
-    f"picom {picom_backend} --config /dev/null",
 ]
+
+# Agregar picom con configuración si existe
+if os.path.exists(picom_config):
+    autoinit.append(f"picom --config {picom_config} {picom_backend}")
+else:
+    autoinit.append(f"picom {picom_backend or '--experimental-backends'} --config /dev/null")
 
 # Agregar comando xrandr si está configurado
 if xrandr_command:
