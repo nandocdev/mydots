@@ -40,6 +40,7 @@ from src.config import (
     backlight_name,
     disk_device,
     keyboard_layouts,
+    bar_size,
 )
 from libqtile import widget, bar
 from libqtile.lazy import lazy
