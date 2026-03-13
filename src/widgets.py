@@ -45,6 +45,7 @@ from libqtile import widget
 from libqtile.lazy import lazy
 from src.functions import get_network_interface
 from libqtile.widget import ImapWidget
+from widgets.internet_status import InternetStatus
 
 # from libqtile.widget.bluetooth import Bluetooth
 import keyring
@@ -131,7 +132,24 @@ def widgetWindowName():
 
 
 def widgetPrompt():
-    return widget.Prompt()
+    return widget.Prompt(
+        **__base("info"),
+        font="Ubuntu Mono",  # Fuente monoespaciada ideal para prompts
+        fontsize=14,
+        cursor=True,
+        cursor_color="88c0d0",  # Azul claro
+        cursorblink=0.3,
+        prompt="> ",  # Prompt simple
+        fmt='<span foreground="#a3be8c">[>_]</span> {}',  # Formato con markup
+        markup=True,
+        max_history=50,
+        ignore_dups_history=True,
+        record_history=True,
+        bell_style="visual",  # Alerta visual para inicio/fin del historial
+        visual_bell_color="bf616a",  # Rojo para el bell visual
+        visual_bell_time=0.1,
+        padding=5,
+    )
 
 
 def widgetCheckUpdates():
@@ -143,7 +161,7 @@ def widgetCheckUpdates():
         no_update_string="",
         update_interval=3600,  # 1 hora (reducido de 30min para mejor performance)
         colour_have_updates=theme["bright_orange"],
-        colour_no_updates=theme["comment"],
+        colour_no_updates=theme["background"],
     )
 
 
@@ -168,6 +186,17 @@ def widgetWlan():
         max_chars=12,
     )
 
+def widgetInternetStatus():
+    """Widget de estado de internet con integración de colores del tema"""
+    return InternetStatus(
+        **__base("status"),
+        label_connected="󰀂  Online",
+        label_disconnected="󰀂  Offline",
+        color_connected=theme["green"],
+        color_disconnected=theme["red"],
+        update_interval=10,
+        fontsize=text_size - 2,
+    )
 
 def widgetWlanSup():
     """Widget WiFi mejorado con detección inteligente"""
@@ -357,10 +386,11 @@ primary_widgets = [
     __separator(),
     widgetWindowName(),
     widget.Spacer(length=8),  # Espaciador para mejor distribución
-    widgetImap(),
+    widgetPrompt(),
     __separator(),
     widgetCheckUpdates(),
     __separator(),
+    widgetInternetStatus(),
     __icon("󰛵 ", "network"),
     widgetWlanSup(),
     widgetNet(),
