@@ -78,7 +78,7 @@ def __inverse():
 
 def __separator():
     """Separador con mejor espaciado visual"""
-    return widget.Sep(**__base("info"), linewidth=0, padding=8)
+    return widget.Sep(**__base("info"), linewidth=1, padding=12, size_percent=50)
 
 
 def __icon(icon, color_key="default", is_pill=False):
@@ -88,15 +88,16 @@ def __icon(icon, color_key="default", is_pill=False):
         # Si es parte de una píldora, invertimos colores
         base_style = {"background": theme[_widget_colors.get(color_key, "cyan")], "foreground": theme["background"]}
         
-    return widget.TextBox(text=icon, fontsize=icon_size + 2, padding=4, **base_style)
+    return widget.TextBox(text=icon, font=font, fontsize=icon_size + 4, padding=6, **base_style)
 
 
 def __pill_open(color_key="default"):
-    """Abre una cápsula con el color del tema"""
+    """Abre una cápsula con el color del tema (estilo triángulo)"""
     color = theme[_widget_colors.get(color_key, "cyan")]
     return widget.TextBox(
-        text="",
-        fontsize=bar_size + 4,
+        text="\uE0BA",
+        font=font,
+        fontsize=bar_size + 14,
         padding=0,
         foreground=color,
         background=theme["background"]
@@ -104,11 +105,12 @@ def __pill_open(color_key="default"):
 
 
 def __pill_close(color_key="default"):
-    """Cierra una cápsula con el color del tema"""
+    """Cierra una cápsula con el color del tema (estilo triángulo)"""
     color = theme[_widget_colors.get(color_key, "cyan")]
     return widget.TextBox(
-        text="",
-        fontsize=bar_size + 4,
+        text="\uE0BC",
+        font=font,
+        fontsize=bar_size + 14,
         padding=0,
         foreground=color,
         background=theme["background"]
@@ -125,8 +127,10 @@ def __pill_base(color_key="default"):
 
 
 def __textInput(text):
+    if not text:
+        return ""
     s = text.split("-")
-    return s[-1].capitalize()
+    return s[-1].strip().capitalize()
 
 
 # definimos una funcion para cada widget
@@ -136,15 +140,16 @@ def widgetGrupBox():
         font=font,
         fontsize=text_size,
         margin_y=3,
-        margin_x=4,
+        margin_x=0,
         padding_y=8,
-        padding_x=5,
-        borderwidth=1,
+        padding_x=10,
+        borderwidth=2,
         active=theme["bright_green"],
         inactive=theme["comment"],
-        rounded=True,
-        highlight_method="block",
-        this_current_screen_border=theme["comment"],
+        rounded=False,
+        highlight_method="line",
+        highlight_color=[theme["background"], theme["background"]],
+        this_current_screen_border=theme["cyan"],
         this_screen_border=theme["comment"],
         other_current_screen_border=theme["background"],
         other_screen_border=theme["background"],
@@ -159,18 +164,20 @@ def widgetWindowName():
     return widget.WindowName(
         font=font,
         fontsize=text_size - 2,
-        padding=8,
-        foreground=theme["bright_cyan"],
+        padding=10,
+        foreground=theme["foreground"],
         background=theme["background"],
         parse_text=__textInput,
-        max_chars=60,  # Limitar longitud para mejor visualización
+        max_chars=50,
+        fmt="  {}",
+        markup=False,
     )
 
 
 def widgetPrompt():
     return widget.Prompt(
         **__base("info"),
-        font="Ubuntu Mono",  # Fuente monoespaciada ideal para prompts
+        font="Hack Nerd Font",  # Fuente monoespaciada ideal para prompts
         fontsize=14,
         cursor=True,
         cursor_color="88c0d0",  # Azul claro
@@ -219,7 +226,7 @@ def widgetWlan(is_pill=True):
     return widget.Wlan(
         **style,
         interface=get_network_interface(),
-        format="{essid} {percent:2.0%}",
+        format="{essid} {percent:.0%}",
         disconnected_message="Disconnected",
         update_interval=5,
         max_chars=12,
@@ -249,7 +256,7 @@ def widgetWlanSup(is_pill=True):
         return widget.Wlan(
             **style,
             interface=interface,
-            format="{percent:2.0%}",
+            format="{percent:.0%}",
             disconnected_message="X",
             update_interval=5,
             max_chars=12,
@@ -295,7 +302,7 @@ def widgetBattery(is_pill=True):
     style = __pill_base("status") if is_pill else __base("status")
     return widget.Battery(
         **style,
-        format="{char} {percent:2.0%}",
+        format="{char} {percent:.0%}",
         charge_char="󱘖",
         discharge_char="",
         empty_char="󱚢",
@@ -353,10 +360,11 @@ def widgetVolume(is_pill=True):
     )
 
 
-def widgetBacklight():
+def widgetBacklight(is_pill=True):
     """Widget de brillo con mejor diseño"""
+    style = __pill_base("media") if is_pill else __base("media")
     return widget.Backlight(
-        **__base("media"),
+        **style,
         backlight_name=backlight_name,
         fmt="󰃠 {}",
         mouse_callbacks={
@@ -379,6 +387,7 @@ def widgetCurrentLayoutIcon():
     """Widget de icono de layout actual"""
     return widget.CurrentLayout(
         **__base("info"),
+        mode="icon",
         scale=0.7,
     )
 
@@ -428,15 +437,13 @@ def widgetBluetooth(is_pill=True):
 
 primary_widgets = [
     # Izquierda: Grupos y Ventana
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
     widgetGrupBox(),
     __separator(),
     widgetWindowName(),
-    
-    # Centro: Prompt de comandos
-    widget.Spacer(length=bar.STRETCH),
     widgetPrompt(),
-    widget.Spacer(length=bar.STRETCH),
+
+    widget.Spacer(length=bar.STRETCH, background=theme["background"]),
     
     # Derecha: Cápsulas de información
     # Red
@@ -448,7 +455,7 @@ primary_widgets = [
     widgetWlanSup(),
     __pill_close("network"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=3, background=theme["background"]),
     
     # Sistema (CPU + Mem)
     __pill_open("system"),
@@ -459,15 +466,17 @@ primary_widgets = [
     widgetMemory(),
     __pill_close("system"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
     
-    # Media (Volumen)
+    # Media (Volumen + Brillo)
     __pill_open("media"),
     __icon("󰕾", "media", is_pill=True),
     widgetVolume(),
+    widget.TextBox(text=" ", **__pill_base("media")),
+    widgetBacklight(),
     __pill_close("media"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
     
     # Estado (Batería + Updates)
     __pill_open("status"),
@@ -476,21 +485,25 @@ primary_widgets = [
     widgetCheckUpdates(),
     __pill_close("status"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
     
-    # Reloj
+    # Reloj y Teclado
     __pill_open("info"),
     __icon("󰔠", "info", is_pill=True),
     widgetClock(),
+    widget.TextBox(text=" ", **__pill_base("info")),
+    widgetKeyboardLayout(),
     __pill_close("info"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
+    widgetSystray(),
+    widget.Spacer(length=5, background=theme["background"]),
     widgetCurrentLayoutIcon(),
-    widget.Spacer(length=10),
+    widget.Spacer(length=5, background=theme["background"]),
 ]
 
 secondary_widgets = [
-    widget.Spacer(length=10),
+    widget.Spacer(length=5),
     widgetGrupBox(),
     __separator(),
     widgetWindowName(),
@@ -502,13 +515,11 @@ secondary_widgets = [
     widgetCpu(),
     __pill_close("system"),
     
-    widget.Spacer(length=10),
+    widget.Spacer(length=5),
     
     __pill_open("info"),
     widgetClock(),
     __pill_close("info"),
     
-    widget.Spacer(length=10),
-    widgetSystray(),
-    widget.Spacer(length=10),
+    widget.Spacer(length=5),
 ]

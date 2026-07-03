@@ -100,51 +100,57 @@ keys = [
     # Menu de sesion
     # Usar ruta absoluta para asegurar que funcione correctamente
     Key([mod], "x", lazy.spawn(session_script), desc="Session menu"),
+
     # Scratchpad
     Key([mod], "y", lazy.group['scratchpad'].dropdown_toggle('term'), desc="Toggle scratchpad terminal"),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('spotify'), desc="Toggle scratchpad Spotify"),
-    Key([mod], "i", lazy.group['scratchpad'].dropdown_toggle('notes'), desc="Toggle scratchpad notes"),
+    Key([mod], "i", lazy.group['scratchpad'].dropdown_toggle('xfce4-notes'), desc="Toggle scratchpad notes"),
     Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('brave'), desc="Toggle scratchpad notes"),
+
+    # Window Management
+    Key([mod, "shift"], "space", lazy.layout.rotate(), lazy.layout.flip(), desc="Rotate/Flip layout"),
+    Key([mod], "equal", lazy.layout.grow(), desc="Grow window"),
+    Key([mod], "minus", lazy.layout.shrink(), desc="Shrink window"),
+
     # Workflow environments
     Key([mod, "shift"], "d", lazy.spawn("kitty"), desc="Launch terminal"),
     Key([mod, "shift"], "m", lazy.spawn("vlc"), desc="Launch media player"),
     Key([mod, "shift"], "o", lazy.spawn("libreoffice"), desc="Launch office suite"),
-    # --------------------------xx---------------------------
+
+    # -----------------------------------------------------
     # atajos de teclas de hardware
     # -----------------------------------------------------
-    # lanza redshift
-    # Key([mod], "r", lazy.spawn("redshift -O 1200"), desc="Launch redshift"),
-    # Key([mod, cfg.mod_aux], "r", lazy.spawn("redshift -x"), desc="Close redshift"),
-    # Control de volumen
+    # Control de volumen con OSD
     Key(
         [],
         "XF86AudioMute",
-        lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle"),
+        lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts", "notify_volume.sh mute")),
         desc="Mute volume",
     ),
     Key(
         [],
         "XF86AudioLowerVolume",
-        lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%"),
+        lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts", "notify_volume.sh down")),
         desc="Lower volume",
     ),
     Key(
         [],
         "XF86AudioRaiseVolume",
-        lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%"),
+        lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts", "notify_volume.sh up")),
         desc="Raise volume",
     ),
-    # Control de brillo utilizando brightnessctl
+
+    # Control de brillo con OSD
     Key(
         [],
         "XF86MonBrightnessUp",
-        lazy.spawn("brightnessctl set +10%"),
+        lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts", "notify_brightness.sh up")),
         desc="Increase brightness",
     ),
     Key(
         [],
         "XF86MonBrightnessDown",
-        lazy.spawn("brightnessctl set 10%-"),
+        lazy.spawn(os.path.join(cfg.qtile_config_path, "scripts", "notify_brightness.sh down")),
         desc="Decrease brightness",
     ),
 ]
